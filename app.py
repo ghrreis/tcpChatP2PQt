@@ -5,6 +5,7 @@ def main():
     app = QApplication([])
     window = WinChat()
     window.show()
+
     app.exec_()
 
 
