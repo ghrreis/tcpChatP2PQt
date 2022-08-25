@@ -11,4 +11,4 @@ direto para o cliente desejado.
 python server.py
 
 ## Execução do cliente
-python app.py
+python app.py IP-servidor-que-contém-lista-usuários-on-line
