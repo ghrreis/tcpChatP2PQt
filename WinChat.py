@@ -1,6 +1,5 @@
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
-from PyQt5 import QtCore
 import socket
 import random
 import time
@@ -8,16 +7,15 @@ import threading
 
 # name = StringVar()  # Variável para receber o nome do usuário
 
-port = random.randint(10000, 11000)  # Gera um volar aleatório entre 10.000 e 11.000 que será utilizado para criar porta de conexão entre os peers
+port = random.randint(10000, 11000)  # Gera um valor aleatório entre 10.000 e 11.000 que será utilizado para criar porta de conexão entre os peers
 ip = "0.0.0.0"  # Aceita conexão de qualquer origem
 target_port = 9999  # Porta de conexão com o servidor
-target_host = "localhost" # Endereço do servidor que possui os usuários online
-#target_host = "192.168.1.108"  # Endereço do servidor que possui os usuários online
+target_host = ""  # Variável para guardar o endereço do servidor que possui os usuários on-line
 
 
 class WinChat(QMainWindow):
 
-    def __init__(self):
+    def __init__(self, trgtHost):
 
         super(WinChat, self).__init__()
         uic.loadUi("winChat.ui", self)
@@ -25,6 +23,8 @@ class WinChat(QMainWindow):
         self.pbSendName.clicked.connect(lambda: self.__cmdSendName(self.leName.text()))
         self.pbSendMessage.clicked.connect(lambda: self.__cmdSendMsg(self.lwOnlineUsers.currentItem().text()))
         # self.lwOnlineUsers.itemClicked.connect(lambda: self.__cmdSendMsg(self.lwOnlineUsers.currentItem().text()))
+
+        self.target_host = trgtHost # Recebe IP do servidor passado como parâmetro para buscar a lista de usuários on-line
 
         # Cria uma thread passando como parâmetros a função handleRequestUsers
         client_handler = threading.Thread(target=self.__handleRequestUsers)
