@@ -7,13 +7,13 @@ import threading
 
 # name = StringVar()  # Variável para receber o nome do usuário
 
-port = random.randint(10000, 11000)  # Gera um valor aleatório entre 10.000 e 11.000 que será utilizado para criar porta de conexão entre os peers
-ip = "0.0.0.0"  # Aceita conexão de qualquer origem
-target_port = 9999  # Porta de conexão com o servidor
-target_host = ""  # Variável para guardar o endereço do servidor que possui os usuários on-line
-
 
 class WinChat(QMainWindow):
+
+    port = random.randint(10000, 11000)  # Gera um valor aleatório entre 10.000 e 11.000 que será utilizado para criar porta de conexão entre os peers
+    ip = "0.0.0.0"  # Aceita conexão de qualquer origem
+    target_port = 9999  # Porta de conexão com o servidor
+    target_host = ""  # Variável para guardar o endereço do servidor que possui os usuários on-line
 
     def __init__(self, trgtHost):
 
@@ -25,7 +25,7 @@ class WinChat(QMainWindow):
         # self.lwOnlineUsers.itemClicked.connect(lambda: self.__cmdSendMsg(self.lwOnlineUsers.currentItem().text()))
 
         self.target_host = trgtHost # Recebe IP do servidor passado como parâmetro para buscar a lista de usuários on-line
-
+        print(self.target_host)
         # Cria uma thread passando como parâmetros a função handleRequestUsers
         client_handler = threading.Thread(target=self.__handleRequestUsers)
         client_handler.start()  # Inicia a thread
@@ -45,16 +45,16 @@ class WinChat(QMainWindow):
         # Cria socket utilizando protocolo IPv4 e protocolo TCP
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # Conecta a um socket remoto (servidor) passando os parâmetros host, porta
-        client.connect((target_host, target_port))
+        client.connect((self.target_host, self.target_port))
         # Envia conjunto de bytes (mensagens) para o socket remoto (servidor)
-        client.send(str.encode("0:"+name+":"+str(port)))
+        client.send(str.encode("0:"+name+":"+str(self.port)))
 
     # Função para requisitar ao servidor a lista de usuários online
     def __handleRequestUsers(self):
         while True:
             time.sleep(10)  # Faz a requisição a cada 30s
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Cria socket utilizando protocolo IPv4 e protocolo TCP
-            client.connect((target_host, target_port))  # Conecta a um socket remoto (servidor) passando os parâmetros host, porta
+            client.connect((self.target_host, self.target_port))  # Conecta a um socket remoto (servidor) passando os parâmetros host, porta
             client.send(str.encode("1:"))  # Envia conjunto de bytes (mensagens) para o socket remoto (servidor)
             request = client.recv(8192)  # Recebe a lista de usuários online
             listUsers = str(request, "utf-8").split("@")  # Separa a lista de usuários que estão concatenados pelo @
@@ -69,9 +69,9 @@ class WinChat(QMainWindow):
     def __peerServer(self):
         global messagePeer  # Variável para receber a mensagem de um peer
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Cria socket utilizando protocolo IPv4 e protocolo TCP
-        server.bind((ip, port))  # Atribui ao socket endereço e porta de conexão
+        server.bind((self.ip, self.port))  # Atribui ao socket endereço e porta de conexão
         server.listen(5)  # Define que o servidor está pronto para receber conexões com no máximo 5
-        print("[*] Listening on", ip, ":", port)  # Imprime os endereços IP e Porta que o servidor está sendo executado
+        print("[*] Listening on", self.ip, ":", self.port)  # Imprime os endereços IP e Porta que o servidor está sendo executado
 
         while True:
             # Bloqueia o serviço até receber um pedido de conexão com os valores de conexão (socket cliente) e endereço
